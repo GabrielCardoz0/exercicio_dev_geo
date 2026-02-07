@@ -2,7 +2,7 @@ import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-export function UserAvatar() {
+export default function UserAvatar() {
   return (
     <div className="mt-auto p-4">
       <Separator className="mb-3" />

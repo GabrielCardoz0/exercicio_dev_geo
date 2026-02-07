@@ -1,4 +1,3 @@
-import { UserAvatar } from "@/components/UserAvatar";
 import {
   SidebarProvider,
   Sidebar,
@@ -7,9 +6,15 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Map as MapIcon } from "lucide-react";
+import UserAvatar from "@/components/UserAvatar";
 import Map from "./components/Map";
+import SavePointsList from "./components/SavePointsList";
+import { useState } from "react";
 
-function App() {
+export default function App() {
+  const [savePoints] = useState([]);
+  const [selectedSavePointId] = useState<number | null>(null);
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex h-screen w-full overflow-hidden">
@@ -21,6 +26,7 @@ function App() {
             </div>
           </SidebarHeader>
           <SidebarContent className="px-3 pb-3 flex-1">
+            <SavePointsList features={savePoints} onSelect={console.log} onRemove={console.log} selectedId={selectedSavePointId} />
           </SidebarContent>
           <UserAvatar />
         </Sidebar>
@@ -33,5 +39,3 @@ function App() {
     </SidebarProvider>
   );
 };
-
-export default App;
