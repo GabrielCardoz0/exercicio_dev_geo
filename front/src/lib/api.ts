@@ -1,3 +1,4 @@
+import type { ResourceFeatureCollection } from '@/assets/interfaces';
 import { API_URL } from '@/variables';
 import axios from 'axios';
 
@@ -35,7 +36,7 @@ api.interceptors.response.use(
 );
 
 
-export const getResourcesData = async () => {
+export const getResourcesData = async (): Promise<ResourceFeatureCollection> => {
   const response = await api.get('/resources');
   return response.data;
 }
