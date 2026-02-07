@@ -42,7 +42,7 @@ export default function App() {
 
         <main className="w-full">
           <SidebarTrigger className="relative z-1 top-2 ml-2" variant={"outline"}/>
-          <Map setPolygonArea={setPolygonArea} polygonArea={polygonArea} />
+          <Map setPolygonArea={setPolygonArea} />
         </main>
       </div>
     </SidebarProvider>

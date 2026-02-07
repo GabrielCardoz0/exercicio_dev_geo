@@ -9,13 +9,12 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 
 interface MapProps {
-  polygonArea: ResourceFeature[],
   //eslint-disable-next-line
   setPolygonArea: (data: any) => void
 }
 
 
-export default function Map({ setPolygonArea, polygonArea }: MapProps) {
+export default function Map({ setPolygonArea }: MapProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const drawRef = useRef<MapboxDraw | null>(null)
   const storesRef = useRef<ResourceFeatureCollection | null>(null)
@@ -104,6 +103,7 @@ export default function Map({ setPolygonArea, polygonArea }: MapProps) {
           duration: 800,
         })
       })
+
     })
 
     return () => map.remove()
