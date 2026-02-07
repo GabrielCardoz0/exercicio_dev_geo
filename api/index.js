@@ -28,14 +28,14 @@ api
           },
           properties: {
             id: lineIndex,
-            estab: parseFloat(values[2]),
-            dom: parseFloat(values[3]),
-            const: parseFloat(values[4]),
-            reli: parseFloat(values[5]),
-            ensino: parseFloat(values[6]),
-            saude: parseFloat(values[7]),
-            dom_col: parseFloat(values[8]),
-            estab_agro: parseFloat(values[9]),
+            estabelecimento: parseFloat(values[2]),
+            domicilio_particular: parseFloat(values[3]),
+            estabelecimento_construcao: parseFloat(values[4]),
+            estabelecimento_religioso: parseFloat(values[5]),
+            estabelecimento_ensino: parseFloat(values[6]),
+            estabelecimento_saude: parseFloat(values[7]),
+            domicilio_coletivo: parseFloat(values[8]),
+            estabelecimento_agro: parseFloat(values[9]),
           },
         }
       });

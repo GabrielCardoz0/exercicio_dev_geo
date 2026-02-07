@@ -6,6 +6,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import type { ResourceFeature } from '@/assets/interfaces';
 
 
 export default function Map() {
@@ -17,7 +18,7 @@ export default function Map() {
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
-      center: [-50.500237, -20.290054],
+      center: [-50.5524199269712, -20.271121926799538],
       zoom: 12.5,
       // style: 'mapbox://styles/mapbox/light-v11'
     })
@@ -61,7 +62,18 @@ export default function Map() {
           "circle-opacity": 0.5
         },
       })
+      .on('click', 'unclustered-point', (e) => {
+        const feature = e.features?.[0] as ResourceFeature | undefined
+        
+        if (!feature) return
+  
+        map.flyTo({
+          center: feature.geometry.coordinates as [number, number],
+          duration: 800,
+        })
+      })
     })
+
     return () => map.remove()
   }, [])
 
