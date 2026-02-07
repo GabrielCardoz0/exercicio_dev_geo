@@ -1,0 +1,4 @@
+/front/node_modules
+/api/node_modules
+/front/.env
+/api/.env

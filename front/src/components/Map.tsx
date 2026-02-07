@@ -1,3 +1,4 @@
+import { getResourcesData } from '@/lib/api'
 import { MAPBOX_API_KEY } from '@/variables'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -19,6 +20,17 @@ export default function Map() {
 
     mapRef.current = map
 
+    map.on('load', async () => {
+      const data = await getResourcesData();
+
+      map.addSource('stores', {
+        type: 'geojson',
+        data,
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50,
+      })
+    })
     return () => map.remove()
   }, [])
 
