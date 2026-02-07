@@ -23,12 +23,22 @@ export default function Map() {
     map.on('load', async () => {
       const data = await getResourcesData();
 
-      map.addSource('stores', {
+      map
+      .addSource('stores', {
         type: 'geojson',
         data,
         cluster: true,
         clusterMaxZoom: 14,
         clusterRadius: 50,
+      })
+      .addLayer({
+        id: 'unclustered-point',
+        type: 'circle',
+        source: 'stores',
+        paint: {
+          'circle-radius': 4,
+          'circle-color': '#ff0000',
+        },
       })
     })
     return () => map.remove()
