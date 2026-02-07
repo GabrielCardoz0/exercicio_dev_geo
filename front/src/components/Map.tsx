@@ -3,14 +3,22 @@ import { MAPBOX_API_KEY } from '@/variables'
 import mapboxgl from 'mapbox-gl'
 import { useEffect, useRef } from 'react'
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-
+import type { ResourceFeature, ResourceFeatureCollection } from '@/assets/interfaces';
+import * as turf from '@turf/turf'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
-import type { ResourceFeature } from '@/assets/interfaces';
+
+interface MapProps {
+  polygonArea: ResourceFeature[],
+  //eslint-disable-next-line
+  setPolygonArea: (data: any) => void
+}
 
 
-export default function Map() {
+export default function Map({ setPolygonArea, polygonArea }: MapProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null)
+  const drawRef = useRef<MapboxDraw | null>(null)
+  const storesRef = useRef<ResourceFeatureCollection | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -27,14 +35,37 @@ export default function Map() {
       displayControlsDefault: false,
       controls: {
         polygon: true,
-        trash: true
+        trash: true,
+        point: true,
       },
-      defaultMode: 'draw_polygon'
-    });
+      // defaultMode: ''
+    })
 
-    const defineArea = () => {}
+    const defineArea = (e: { type: 'draw.delete' | 'draw.create' | 'draw.update' }) => {
+      if(e.type === 'draw.delete') return setPolygonArea([])
+
+      const drawn = draw.getAll()
+      
+      if (!storesRef.current) return
+
+      const polygons = drawn.features.filter(feature => feature.geometry.type === 'Polygon')
+
+      if(polygons.length > 1) {
+        draw.delete(String(drawn.features[0].id))
+      }
+
+      const pointsInside = turf.pointsWithinPolygon(
+        storesRef.current,
+        // eslint-disable-next-line
+        polygons[polygons.length > 1 ? 1 : 0] as any
+      )
+
+      setPolygonArea(pointsInside.features)
+    }
 
     mapRef.current = map
+    drawRef.current = draw
+
     mapRef.current
     .addControl(draw)
     .on('draw.create', defineArea)
@@ -43,6 +74,7 @@ export default function Map() {
 
     map.on('load', async () => {
       const data = await getResourcesData();
+      storesRef.current = data;
 
       map
       .addSource('stores', {

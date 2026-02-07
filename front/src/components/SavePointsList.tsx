@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Trash2 } from "lucide-react";
 import type { ResourceFeature } from "@/assets/interfaces";
 
-interface PointsListProps {
+interface SavePointsListListProps {
   features: ResourceFeature[];
   selectedId: number | null;
   onSelect: (feature: ResourceFeature) => void;
   onRemove: (id: number) => void;
 }
 
-export default function SavePointsList({ features, onSelect, onRemove, selectedId }: PointsListProps) {
+export default function SavePointsList({ features, onSelect, onRemove, selectedId }: SavePointsListListProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2 px-1">
@@ -19,7 +19,7 @@ export default function SavePointsList({ features, onSelect, onRemove, selectedI
           Pontos Salvos ({features.length})
         </h3>
       </div>
-      <ScrollArea className="h-[250px]">
+      <ScrollArea className="h-60">
         <div className="flex flex-col gap-1 pr-2">
           {features.length === 0 && (
             <p className="text-xs text-muted-foreground px-2 py-4 text-center">

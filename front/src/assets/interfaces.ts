@@ -26,7 +26,7 @@ interface AddressProperties {
 
 export interface ResourceProperties {
   id: number;
-  estabelecimento?: number;
+  estabelecimento_outras_finalidades?: number;
   domicilio_particular?: number;
   estabelecimento_construcao?: number;
   estabelecimento_religioso?: number;

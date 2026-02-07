@@ -28,7 +28,7 @@ api
           },
           properties: {
             id: lineIndex,
-            estabelecimento: parseFloat(values[2]),
+            estabelecimento_outras_finalidades: parseFloat(values[2]),
             domicilio_particular: parseFloat(values[3]),
             estabelecimento_construcao: parseFloat(values[4]),
             estabelecimento_religioso: parseFloat(values[5]),
