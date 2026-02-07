@@ -1,3 +1,6 @@
-import api from "./app";
+import api from './app';
+import dotenv from 'dotenv'
 
-api.listen(5000, () => console.log('API IS RUNNING ON PORT: 5000'));
+dotenv.config();
+
+api.listen(process.env.PORT, () => console.log(`Api is running on port: ${process.env.PORT}`));

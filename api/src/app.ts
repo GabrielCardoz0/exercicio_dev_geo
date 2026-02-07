@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import resourcesRouter from './routers/resources';
 
-
 export default express()
 .use(express.json())
 .use(cors())
