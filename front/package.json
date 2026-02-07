@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.5.1",
+    "@turf/turf": "^7.3.3",
     "@types/mapbox-gl": "^3.4.1",
     "axios": "^1.13.4",
     "class-variance-authority": "^0.7.1",
@@ -25,6 +27,7 @@
     "@eslint/js": "^9.39.1",
     "@tailwindcss/vite": "^4.1.18",
     "@types/geojson": "^7946.0.16",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.9",
     "@types/node": "^24.10.11",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
