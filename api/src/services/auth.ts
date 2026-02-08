@@ -1,11 +1,17 @@
-import prisma from '../config/db';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
+import { UsersService } from './users';
 
 dotenv.config();
 
 export class AuthService {
+
+  private readonly usersService: UsersService;
+
+  constructor() {
+    this.usersService = new UsersService();
+  }
 
   private signJwt = (userId: number) => {
     return jwt.sign({ userId }, process.env.JWT_SECRET!)
@@ -19,20 +25,8 @@ export class AuthService {
     return bcrypt.hashSync(password, 10)
   }
 
-  private getUserByEmailOrFail = async (email: string) => {
-    const user = await prisma.user.findFirst({
-      where: {
-        email
-      }
-    });
-
-    if(!user) throw new Error('Usuário não encontrado.');
-
-    return user;
-  }
-
   public login = async ({ email, password }: { email: string, password: string }) => {
-    const user = await this.getUserByEmailOrFail(email);
+    const user = await this.usersService.getByEmailOrFail(email);
 
     const isValidPassword = await this.verifyPassword({ password, comparePassword: user.password });
 

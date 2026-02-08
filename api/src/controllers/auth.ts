@@ -12,7 +12,7 @@ export default class AuthControllers {
     try {
       const token = await this.authService.login(req.body);
 
-      return res.send(token);
+      return res.send({ token });
     } catch (error) {
       console.log(error);
       return res.status(500).send({ message: 'Erro inesperado' })
