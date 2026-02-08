@@ -42,7 +42,6 @@ export const getResourcesData = async (): Promise<ResourceFeatureCollection> => 
 }
 
 export const getInfoFromOpenStreetMap = async ({ lat, lon }: { lat: number, lon: number }) => {
-  console.log(lat, lon);
   const response = await 
   axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
 return response.data;

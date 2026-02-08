@@ -21,7 +21,6 @@ interface NewMarkerPopupProps {
 }
 
 export default function NewMarkerPopup({ feature, onCancel, onSave }: NewMarkerPopupProps) {
-  console.log('AQUI VEM', feature);
   return (
     <div className="p-2 text-sm space-y-2">
       <div className="text-sm font-bold">Adicionar marcador?</div>
@@ -39,29 +38,3 @@ export default function NewMarkerPopup({ feature, onCancel, onSave }: NewMarkerP
     </div>
   )
 }
-
-
-
-
-
-          // <div className="p-2 text-sm">
-          //   <strong>{osmData.address?.building || 'Local desconhecido'}</strong>
-          //   <p>{osmData.display_name}</p>
-      
-          //   <button
-          //     className="mt-2 px-2 py-1 bg-blue-600 text-white rounded"
-          //     onClick={async () => {
-          //       // await saveMarker({
-          //       //   lat,
-          //       //   lon,
-          //       //   osmData,
-          //       // })
-          //       console.log('chamou para salvar');
-          //       const featureId = e.features[0].id
-          //       drawRef.current?.delete(String(e.features[0].id))
-          //       popupRef.current?.remove()
-          //     }}
-          //   >
-          //     Salvar
-          //   </button>
-          // </div>

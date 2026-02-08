@@ -37,9 +37,9 @@ const addStoreLayer = (map: mapboxgl.Map) => {
     type: 'circle',
     source: 'stores',
     paint: {
-      'circle-radius': 4,
-      'circle-color': '#ff0000',
-      'circle-opacity': 0.5,
+      'circle-radius': 3,
+      'circle-color': '#0088ff',
+      'circle-opacity': 0.4,
     },
   })
 }
@@ -127,7 +127,7 @@ export default function Map({ setPolygonArea }: MapProps) {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
       center: [-50.55, -20.27],
-      zoom: 12.5,
+      zoom: 15,
     })
   
     const draw = new MapboxDraw({

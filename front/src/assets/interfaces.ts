@@ -51,11 +51,3 @@ export interface IUser {
   updated_at: string;
 }
 
-
-export interface AuthContextType {
-  user: IUser | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
-}
-

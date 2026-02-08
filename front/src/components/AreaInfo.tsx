@@ -68,7 +68,7 @@ export default function AreaInfo({ features }: AreaInfoProps) {
                 Demarque uma região para ver mais informações.
               </p>
             )}
-            {calculatedInfos.map((info) => (
+            {features.length !== 0 && calculatedInfos.map((info) => (
               <Card key={info.key} className="shadow-none border-border">
                 <CardHeader className="p-2 pb-1">
                   <CardTitle className="text-xs font-medium text-foreground">

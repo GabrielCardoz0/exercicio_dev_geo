@@ -1,17 +1,11 @@
-// import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-// import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-// import { SidebarProvider } from "@/components/ui/sidebar";
-// import { AppSidebar } from "@/components/AppSidebar";
-// import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
 import { Toaster } from "sonner";
 import GeoMap from "./pages/GeoMap";
 import { useAuth } from "./hooks/use-auth";
 import { AuthProvider } from "./contexts/authProvider";
 
-// const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -24,11 +18,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Layout = ({ children }: { children: React.ReactNode }) => (
-  // <SidebarProvider>
     <div className="flex min-h-screen w-full">
       <main className="">{children}</main>
     </div>
-  // </SidebarProvider>
 );
 
 const AppRoutes = () => {

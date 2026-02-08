@@ -9,8 +9,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('gabriel@gmail.com');
+  const [password, setPassword] = useState('gabriel');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();

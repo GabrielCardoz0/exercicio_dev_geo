@@ -2,7 +2,7 @@ import { useState, useEffect, type ReactNode } from 'react';
 import axios from 'axios';
 import { AuthContext } from './authContext';
 import type { IUser } from '@/assets/interfaces';
-
+import { API_URL } from '@/variables';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<IUser | null>(() => {
@@ -20,22 +20,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await axios.post<{ token: string }>('http://localhost:5000/auth/login', {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });
 
       const { token } = response.data;
+
       localStorage.setItem('token', token);
 
-      // 2. Buscar dados completos do usuário
-      const userResponse = await axios.get('http://localhost:5000/users/me', {
+      const userResponse = await axios.get(`${API_URL}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setUser(userResponse.data.user);
+      setUser(userResponse.data);
+
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -48,6 +49,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem('token');
   };
+
+
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
       {children}
