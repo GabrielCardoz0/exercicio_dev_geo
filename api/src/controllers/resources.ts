@@ -15,7 +15,7 @@ export default class ResourcesControllers {
       return res.send(mock);
     } catch (error) {
       console.log(error);
-      return res.status(500).send({ message: 'Unexpected error' })
+      return res.status(500).send({ message: 'Erro inesperado' })
     }
   }
 }
