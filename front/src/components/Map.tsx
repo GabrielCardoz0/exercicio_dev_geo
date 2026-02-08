@@ -1,14 +1,16 @@
-import { getResourcesData } from '@/lib/api'
+import { getInfoFromOpenStreetMap, getResourcesData } from '@/lib/api'
 import { MAPBOX_API_KEY } from '@/variables'
 import mapboxgl from 'mapbox-gl'
 import { useEffect, useRef } from 'react'
-import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import type { ResourceFeature, ResourceFeatureCollection } from '@/assets/interfaces';
+import MapboxDraw from '@mapbox/mapbox-gl-draw'
+import type { ResourceFeature, ResourceFeatureCollection } from '@/assets/interfaces'
 import * as turf from '@turf/turf'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import { createRoot } from "react-dom/client"
-import MapPopup from './MapPopup';
+import MapPopup from './MapPopup'
+import type { DrawCreateEvent, DrawUpdateEvent, DrawDeleteEvent } from '@mapbox/mapbox-gl-draw'
+import NewMarkerPopup from './NewMarkerPopup'
 
 interface MapProps {
   //eslint-disable-next-line
@@ -21,8 +23,8 @@ export default function Map({ setPolygonArea }: MapProps) {
   const storesRef = useRef<ResourceFeatureCollection | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const popupRef = useRef<mapboxgl.Popup | null>(null)
-  
 
+  
   useEffect(() => {
     mapboxgl.accessToken = MAPBOX_API_KEY
 
@@ -40,10 +42,48 @@ export default function Map({ setPolygonArea }: MapProps) {
         trash: true,
         point: true,
       },
-      // defaultMode: ''
     })
 
-    const defineArea = (e: { type: 'draw.delete' | 'draw.create' | 'draw.update' }) => {
+    const drawOnMap = async (e: DrawCreateEvent | DrawUpdateEvent | DrawDeleteEvent) => {
+      console.log(e)
+
+      if (e.type === 'draw.create' && e.features[0].geometry.type === 'Point') {
+        const [lon, lat] = e.features[0].geometry.coordinates
+      
+        const OSMData = await getInfoFromOpenStreetMap({ lat, lon })
+      
+        popupRef.current?.remove()
+      
+        const popupNode = document.createElement('div')
+      
+        popupRef.current = new mapboxgl.Popup({
+          closeOnClick: false,
+          closeButton: false,
+          offset: 10,
+          closeOnMove: true
+        })
+        .setLngLat([lon, lat])
+        .setDOMContent(popupNode)
+        .addTo(mapRef.current!)
+      
+        const root = createRoot(popupNode)
+        root.render(
+          <NewMarkerPopup
+            feature={OSMData}
+            onCancel={() => {
+              drawRef.current?.delete(String(e.features[0].id))
+              popupRef.current?.remove()
+            }}
+            onSave={() => {
+              drawRef.current?.delete(String(e.features[0].id))
+              popupRef.current?.remove()
+            }}
+          />
+        )
+
+        return
+      }
+
       if(e.type === 'draw.delete') return setPolygonArea([])
 
       const drawn = draw.getAll()
@@ -70,13 +110,13 @@ export default function Map({ setPolygonArea }: MapProps) {
 
     mapRef.current
     .addControl(draw)
-    .on('draw.create', defineArea)
-    .on('draw.delete', defineArea)
-    .on('draw.update', defineArea)
+    .on('draw.create', drawOnMap)
+    .on('draw.delete', drawOnMap)
+    .on('draw.update', drawOnMap)
 
     map.on('load', async () => {
-      const data = await getResourcesData();
-      storesRef.current = data;
+      const data = await getResourcesData()
+      storesRef.current = data
 
       map
       .addSource('stores', {
@@ -123,6 +163,7 @@ export default function Map({ setPolygonArea }: MapProps) {
         const root = createRoot(popupNode)
         root.render(<MapPopup feature={feature} />)
       })
+      .on('pitch', console.log)
     })
 
     return () => map.remove()
@@ -133,5 +174,5 @@ export default function Map({ setPolygonArea }: MapProps) {
       <div ref={mapContainerRef} className="w-full h-full" />
     </div>
   )
-};
+}
 
