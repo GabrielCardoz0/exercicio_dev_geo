@@ -40,3 +40,22 @@ export interface ResourceProperties {
 export type ResourceFeature = GeoJSONFeature<ResourceProperties>;
 
 export type ResourceFeatureCollection = GeoJSONFeatureCollection<ResourceFeature>;
+
+
+
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+export interface AuthContextType {
+  user: IUser | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => void;
+}
+

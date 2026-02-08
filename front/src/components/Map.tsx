@@ -1,20 +1,57 @@
 import { getInfoFromOpenStreetMap, getResourcesData } from '@/lib/api'
 import { MAPBOX_API_KEY } from '@/variables'
-import mapboxgl from 'mapbox-gl'
-import { useEffect, useRef } from 'react'
-import MapboxDraw from '@mapbox/mapbox-gl-draw'
 import type { ResourceFeature, ResourceFeatureCollection } from '@/assets/interfaces'
-import * as turf from '@turf/turf'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
-import { createRoot } from "react-dom/client"
-import MapPopup from './MapPopup'
 import type { DrawCreateEvent, DrawUpdateEvent, DrawDeleteEvent } from '@mapbox/mapbox-gl-draw'
+import MapPopup from './MapPopup'
 import NewMarkerPopup from './NewMarkerPopup'
+import { createRoot } from "react-dom/client"
+import mapboxgl from 'mapbox-gl'
+import MapboxDraw from '@mapbox/mapbox-gl-draw'
+import * as turf from '@turf/turf'
+import { useEffect, useRef } from 'react'
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
+import 'mapbox-gl/dist/mapbox-gl.css'
+import type { Feature, Polygon } from 'geojson'
 
 interface MapProps {
   //eslint-disable-next-line
   setPolygonArea: (data: any) => void
+}
+
+//eslint-disable-next-line
+const createMapPopup = ({ lngLat, map, popupNode }:{ lngLat: [number, number], popupNode: HTMLElement, map: mapboxgl.Map }) => {
+  return new mapboxgl.Popup({
+    closeOnClick: false,
+    closeButton: false,
+    offset: 10,
+    closeOnMove: true
+  })
+  .setLngLat(lngLat)
+  .setDOMContent(popupNode)
+  .addTo(map)
+}
+
+const addStoreLayer = (map: mapboxgl.Map) => {
+  map.addLayer({
+    id: 'unclustered-point',
+    type: 'circle',
+    source: 'stores',
+    paint: {
+      'circle-radius': 4,
+      'circle-color': '#ff0000',
+      'circle-opacity': 0.5,
+    },
+  })
+}
+
+const addPointerCursor = (map: mapboxgl.Map) => {
+  map.on('mouseenter', 'unclustered-point', () => {
+    map.getCanvas().style.cursor = 'pointer'
+  })
+
+  map.on('mouseleave', 'unclustered-point', () => {
+    map.getCanvas().style.cursor = ''
+  })
 }
 
 export default function Map({ setPolygonArea }: MapProps) {
@@ -23,18 +60,76 @@ export default function Map({ setPolygonArea }: MapProps) {
   const storesRef = useRef<ResourceFeatureCollection | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const popupRef = useRef<mapboxgl.Popup | null>(null)
-
   
+  const openNewMarkerPopup = async (e: DrawCreateEvent, map: mapboxgl.Map) => {
+    const feature = e.features[0]
+    if (feature.geometry.type !== 'Point') return
+  
+    const [lon, lat] = feature.geometry.coordinates as [number, number]
+    const osmData = await getInfoFromOpenStreetMap({ lat, lon })
+  
+    popupRef.current?.remove()
+  
+    const popupNode = document.createElement('div')
+    popupRef.current = createMapPopup({
+      lngLat: [lon, lat],
+      map,
+      popupNode,
+    })
+  
+    const root = createRoot(popupNode)
+  
+    const cleanup = () => {
+      drawRef.current?.delete(String(feature.id))
+      popupRef.current?.remove()
+    }
+
+    root.render(<NewMarkerPopup feature={osmData} onCancel={cleanup} onSave={cleanup}/>
+    )
+  }
+  const handlePolygonChange = () => {
+    if (!drawRef.current || !storesRef.current) return
+  
+    const { features } = drawRef.current.getAll()
+    const polygons = features.filter(
+      f => f.geometry.type === 'Polygon'
+    )
+  
+    if (!polygons.length) return setPolygonArea([])
+  
+    if (polygons.length > 1) {
+      drawRef.current.delete(String(polygons[0].id))
+    }
+  
+    const pointsInside = turf.pointsWithinPolygon(
+      storesRef.current,
+      polygons.at(-1) as Feature<Polygon>
+    )
+  
+    setPolygonArea(pointsInside.features)
+  }
+
+  const handleDrawEvent = (e: DrawCreateEvent | DrawUpdateEvent | DrawDeleteEvent, map: mapboxgl.Map) => {
+    if (e.type === 'draw.create' && e.features[0].geometry.type === 'Point') {
+      return openNewMarkerPopup(e, map)
+    }
+  
+    if (e.type === 'draw.delete') {
+      return setPolygonArea([])
+    }
+  
+    handlePolygonChange()
+  }
+
   useEffect(() => {
     mapboxgl.accessToken = MAPBOX_API_KEY
-
+  
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
-      center: [-50.5524199269712, -20.271121926799538],
+      center: [-50.55, -20.27],
       zoom: 12.5,
-      // style: 'mapbox://styles/mapbox/light-v11'
     })
-
+  
     const draw = new MapboxDraw({
       displayControlsDefault: false,
       controls: {
@@ -43,136 +138,46 @@ export default function Map({ setPolygonArea }: MapProps) {
         point: true,
       },
     })
-
-    const drawOnMap = async (e: DrawCreateEvent | DrawUpdateEvent | DrawDeleteEvent) => {
-      console.log(e)
-
-      if (e.type === 'draw.create' && e.features[0].geometry.type === 'Point') {
-        const [lon, lat] = e.features[0].geometry.coordinates
-      
-        const OSMData = await getInfoFromOpenStreetMap({ lat, lon })
-      
-        popupRef.current?.remove()
-      
-        const popupNode = document.createElement('div')
-      
-        popupRef.current = new mapboxgl.Popup({
-          closeOnClick: false,
-          closeButton: false,
-          offset: 10,
-          closeOnMove: true
-        })
-        .setLngLat([lon, lat])
-        .setDOMContent(popupNode)
-        .addTo(mapRef.current!)
-      
-        const root = createRoot(popupNode)
-        root.render(
-          <NewMarkerPopup
-            feature={OSMData}
-            onCancel={() => {
-              drawRef.current?.delete(String(e.features[0].id))
-              popupRef.current?.remove()
-            }}
-            onSave={() => {
-              drawRef.current?.delete(String(e.features[0].id))
-              popupRef.current?.remove()
-            }}
-          />
-        )
-
-        return
-      }
-
-      if(e.type === 'draw.delete') return setPolygonArea([])
-
-      const drawn = draw.getAll()
-      
-      if (!storesRef.current) return
-
-      const polygons = drawn.features.filter(feature => feature.geometry.type === 'Polygon')
-
-      if(polygons.length > 1) {
-        draw.delete(String(drawn.features[0].id))
-      }
-
-      const pointsInside = turf.pointsWithinPolygon(
-        storesRef.current,
-        // eslint-disable-next-line
-        polygons[polygons.length > 1 ? 1 : 0] as any
-      )
-
-      setPolygonArea(pointsInside.features)
-    }
-
+  
     mapRef.current = map
     drawRef.current = draw
-
-    mapRef.current
-    .addControl(draw)
-    .on('draw.create', drawOnMap)
-    .on('draw.delete', drawOnMap)
-    .on('draw.update', drawOnMap)
-
+  
+    map.addControl(draw)
+  
+    map.on('draw.create', e => handleDrawEvent(e, map))
+    map.on('draw.update', e => handleDrawEvent(e, map))
+    map.on('draw.delete', e => handleDrawEvent(e, map))
+  
     map.on('load', async () => {
-      const data = await getResourcesData()
-      storesRef.current = data
-
+      storesRef.current = await getResourcesData()
+  
       map
       .addSource('stores', {
         type: 'geojson',
-        data,
+        data: storesRef.current,
         cluster: true,
         clusterMaxZoom: 14,
         clusterRadius: 50,
       })
-      .addLayer({
-        id: 'unclustered-point',
-        type: 'circle',
-        source: 'stores',
-        paint: {
-          'circle-radius': 4,
-          'circle-color': '#ff0000',
-          "circle-opacity": 0.5
-        },
-      })
-      .on('mouseenter', 'unclustered-point', () => {
-        map.getCanvas().style.cursor = 'pointer'
-      })
-      .on('mouseleave', 'unclustered-point', () => {
-        map.getCanvas().style.cursor = ''
-      })
       .on('click', 'unclustered-point', (e) => {
         const feature = e.features?.[0] as ResourceFeature | undefined
         if (!feature) return
-      
         popupRef.current?.remove()
-      
         const popupNode = document.createElement("div")
-      
-        popupRef.current = new mapboxgl.Popup({
-          closeButton: false,
-          closeOnClick: false,
-          offset: 10,
-          closeOnMove: true,
-        })
-          .setLngLat(feature.geometry.coordinates)
-          .setDOMContent(popupNode)
-          .addTo(map)
-      
+        popupRef.current = createMapPopup({ lngLat: feature.geometry.coordinates, map: mapRef.current!, popupNode })
         const root = createRoot(popupNode)
         root.render(<MapPopup feature={feature} />)
       })
-      .on('pitch', console.log)
+      addStoreLayer(map)
+      addPointerCursor(map)
     })
-
+  
     return () => map.remove()
   }, [])
-
+  
   return (
     <div className="absolute top-0 left-0 right-0 bottom-0 flex">
       <div ref={mapContainerRef} className="w-full h-full" />
     </div>
   )
 }
-
