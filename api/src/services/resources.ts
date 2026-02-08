@@ -41,7 +41,10 @@ export class ResourcesService {
 
     const resources = lines.slice(1).map((line, index) => this.csvRowToGeoJson(line, index));
 
-    return resources;
+    return {
+      type: "FeatureCollection",
+      features: resources
+    };
   }
 
 };

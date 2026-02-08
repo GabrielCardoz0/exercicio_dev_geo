@@ -7,18 +7,21 @@ import type { ResourceFeature, ResourceFeatureCollection } from '@/assets/interf
 import * as turf from '@turf/turf'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import { createRoot } from "react-dom/client"
+import MapPopup from './MapPopup';
 
 interface MapProps {
   //eslint-disable-next-line
   setPolygonArea: (data: any) => void
 }
 
-
 export default function Map({ setPolygonArea }: MapProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const drawRef = useRef<MapboxDraw | null>(null)
   const storesRef = useRef<ResourceFeatureCollection | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
+  const popupRef = useRef<mapboxgl.Popup | null>(null)
+  
 
   useEffect(() => {
     mapboxgl.accessToken = MAPBOX_API_KEY
@@ -93,27 +96,42 @@ export default function Map({ setPolygonArea }: MapProps) {
           "circle-opacity": 0.5
         },
       })
+      .on('mouseenter', 'unclustered-point', () => {
+        map.getCanvas().style.cursor = 'pointer'
+      })
+      .on('mouseleave', 'unclustered-point', () => {
+        map.getCanvas().style.cursor = ''
+      })
       .on('click', 'unclustered-point', (e) => {
         const feature = e.features?.[0] as ResourceFeature | undefined
-        
         if (!feature) return
-  
-        map.flyTo({
-          center: feature.geometry.coordinates as [number, number],
-          duration: 800,
+      
+        popupRef.current?.remove()
+      
+        const popupNode = document.createElement("div")
+      
+        popupRef.current = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          offset: 10,
+          closeOnMove: true,
         })
+          .setLngLat(feature.geometry.coordinates)
+          .setDOMContent(popupNode)
+          .addTo(map)
+      
+        const root = createRoot(popupNode)
+        root.render(<MapPopup feature={feature} />)
       })
-
     })
 
     return () => map.remove()
   }, [])
 
-
   return (
-
     <div className="absolute top-0 left-0 right-0 bottom-0 flex">
       <div ref={mapContainerRef} className="w-full h-full" />
     </div>
   )
 };
+
