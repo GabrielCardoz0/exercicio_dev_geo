@@ -5,3 +5,4 @@
 /api/.env
 /api/src/generated/prisma
 /api/dev.db
+/dev.db

@@ -5,12 +5,13 @@ export interface OpenStreetMapFeature {
   "lat": string,
   "lon": string,
   "display_name": string,
-  "address": {
-      "building": string,
-      "city": string,
-      "state": string,
-      "country": string,
-      "postcode": string | number
+  "address"?: {
+      "building"?: string,
+      "city"?: string,
+      "town"?: string,
+      "state"?: string,
+      "country"?: string,
+      "postcode"?: string | number
   }
 }
 

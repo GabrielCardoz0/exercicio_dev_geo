@@ -13,10 +13,10 @@ import { useEffect, useRef, useState } from "react";
 import AreaInfo from "../components/AreaInfo";
 import type { IMarker, ResourceFeature } from "../assets/interfaces";
 import { deleteMarker, getMarkers } from "@/lib/api";
-import { createRoot } from "react-dom/client";
-import mapboxgl, { Marker } from 'mapbox-gl'
+import { Marker } from 'mapbox-gl'
 import { toast } from "sonner";
 import MarkerInfoPopup from "@/components/MarkerInfoPopup";
+import { createMarker, createPopup, createReactDOMContainer } from "@/helpers/map.helpers";
 
 export default function GeoMap() {
   const [markers, setMarkers] = useState<IMarker[]>([]);
@@ -47,23 +47,11 @@ export default function GeoMap() {
   }
 
   const handleAddMarker = async (marker: IMarker, map: mapboxgl.Map) => {
-    const newMarker = new mapboxgl.Marker()
-    .setLngLat([ marker.lon, marker.lat ])
-    .addTo(map);
-
-    const popupNode = document.createElement('div')
-    const root = createRoot(popupNode)
-
-    const popup = new mapboxgl.Popup({
-      closeOnClick: false,
-      closeButton: false,
-      offset: 10,
-      closeOnMove: true
-    })
-    .setDOMContent(popupNode)
-
-    root.render(<MarkerInfoPopup marker={marker} onDelete={() => handleDeleteMarker(marker.id, newMarker)} />)
-    newMarker.setPopup(popup);
+    const popupCustomElement = createReactDOMContainer(
+      <MarkerInfoPopup marker={marker} onDelete={() => handleDeleteMarker(marker.id, newMarker)} />
+    )
+    const popup = createPopup().setDOMContent(popupCustomElement)
+    const newMarker = createMarker({ lngLat: [ marker.lon, marker.lat ], map }).setPopup(popup)
   }
 
   const handleFly = ({ lon, lat }: { lon: number, lat: number }) => {

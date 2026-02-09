@@ -1,4 +1,5 @@
 import type { IMarker, INewMarkerPayload, ResourceFeatureCollection } from '@/assets/interfaces';
+import type { OpenStreetMapFeature } from '@/components/NewMarkerPopup';
 import { API_URL } from '@/variables';
 import axios from 'axios';
 
@@ -40,8 +41,25 @@ export const getResourcesData = async (): Promise<ResourceFeatureCollection> => 
   return response.data;
 }
 
-export const createMarker = async (data: INewMarkerPayload) => {
-  const response = await api.post('/markers', data);
+export const createMarkerApi = async (osmData: OpenStreetMapFeature) => {
+
+  const payload: INewMarkerPayload = {
+    lat: Number(osmData.lat),
+    lon: Number(osmData.lon),
+    display_name: osmData.display_name,
+    place_id: osmData.place_id,
+    address: osmData.address
+      ? {
+          building: osmData.address.building,
+          city: osmData.address.city ?? osmData.address.town,
+          state: osmData.address.state,
+          country: osmData.address.country,
+          postcode: osmData.address.postcode,
+        }
+      : undefined,
+  }
+
+  const response = await api.post('/markers', payload);
   return response.data;
 }
 

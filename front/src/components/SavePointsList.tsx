@@ -39,7 +39,7 @@ export default function SavePointsList({ markers, onSelect, selectedId }: SavePo
                 }`}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate text-foreground">
+                  <p className="text-xs font-medium text-foreground">
                     {marker.display_name ?? `Ponto ${id}`}
                   </p>
                   <p className="text-[10px] text-muted-foreground">
