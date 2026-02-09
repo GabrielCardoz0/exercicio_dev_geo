@@ -2,14 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import prisma from "../config/db";
+import { AuthenticatedRequest, JWTPayload } from "../interfaces";
 
 dotenv.config();
-
-export type AuthenticatedRequest = Request & { user?: { id: number, name: string, password: string } };
-
-export type JWTPayload = {
-  userId: number;
-};
 
 export async function authenticateToken( req: AuthenticatedRequest, res: Response, next: NextFunction ): Promise<any> {
   try {
@@ -22,7 +17,7 @@ export async function authenticateToken( req: AuthenticatedRequest, res: Respons
     
     const { userId } = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
     
-    const findedUser = await prisma.user.findFirst({
+    const findedUser = await prisma.users.findFirst({
       where: {
         id: userId
       }

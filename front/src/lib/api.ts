@@ -1,4 +1,4 @@
-import type { ResourceFeatureCollection } from '@/assets/interfaces';
+import type { IMarker, INewMarkerPayload, ResourceFeatureCollection } from '@/assets/interfaces';
 import { API_URL } from '@/variables';
 import axios from 'axios';
 
@@ -35,9 +35,23 @@ api.interceptors.response.use(
   }
 );
 
-
 export const getResourcesData = async (): Promise<ResourceFeatureCollection> => {
   const response = await api.get('/resources');
+  return response.data;
+}
+
+export const createMarker = async (data: INewMarkerPayload) => {
+  const response = await api.post('/markers', data);
+  return response.data;
+}
+
+export const getMarkers = async (): Promise<IMarker[]> => {
+  const response = await api.get('/markers');
+  return response.data;
+}
+
+export const deleteMarker = async (id: number) => {
+  const response = await api.delete(`/markers/${id}`);
   return response.data;
 }
 

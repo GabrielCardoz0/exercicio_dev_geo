@@ -1,6 +1,6 @@
-import { getInfoFromOpenStreetMap, getResourcesData } from '@/lib/api'
+import { createMarker, getInfoFromOpenStreetMap, getResourcesData } from '@/lib/api'
 import { MAPBOX_API_KEY } from '@/variables'
-import type { ResourceFeature, ResourceFeatureCollection } from '@/assets/interfaces'
+import type { IMarker, ResourceFeature, ResourceFeatureCollection } from '@/assets/interfaces'
 import type { DrawCreateEvent, DrawUpdateEvent, DrawDeleteEvent } from '@mapbox/mapbox-gl-draw'
 import MapPopup from './MapPopup'
 import NewMarkerPopup from './NewMarkerPopup'
@@ -12,13 +12,16 @@ import { useEffect, useRef } from 'react'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { Feature, Polygon } from 'geojson'
+import { toast } from 'sonner'
 
 interface MapProps {
   //eslint-disable-next-line
   setPolygonArea: (data: any) => void
+  mapRef: React.RefObject<mapboxgl.Map | null>
+  markers: React.RefObject<IMarker[]>
+  handleAddMarker: (marker: IMarker, map: mapboxgl.Map) => Promise<void>
 }
 
-//eslint-disable-next-line
 const createMapPopup = ({ lngLat, map, popupNode }:{ lngLat: [number, number], popupNode: HTMLElement, map: mapboxgl.Map }) => {
   return new mapboxgl.Popup({
     closeOnClick: false,
@@ -54,8 +57,7 @@ const addPointerCursor = (map: mapboxgl.Map) => {
   })
 }
 
-export default function Map({ setPolygonArea }: MapProps) {
-  const mapRef = useRef<mapboxgl.Map | null>(null)
+export default function Map({ setPolygonArea, mapRef, markers, handleAddMarker }: MapProps) {
   const drawRef = useRef<MapboxDraw | null>(null)
   const storesRef = useRef<ResourceFeatureCollection | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
@@ -78,15 +80,45 @@ export default function Map({ setPolygonArea }: MapProps) {
     })
   
     const root = createRoot(popupNode)
-  
+
     const cleanup = () => {
       drawRef.current?.delete(String(feature.id))
       popupRef.current?.remove()
     }
 
-    root.render(<NewMarkerPopup feature={osmData} onCancel={cleanup} onSave={cleanup}/>
+    const onSave = async () => {
+      try {
+        const payload = {
+          lat: lat,
+          lon: lon,
+          display_name: osmData.display_name,
+          place_id: osmData.place_id,
+          address: osmData.address
+            ? {
+                building: osmData.address.building,
+                city: osmData.address.city ?? osmData.address.town,
+                state: osmData.address.state,
+                country: osmData.address.country,
+                postcode: osmData.address.postcode,
+              }
+            : undefined,
+        }
+    
+        const { marker } = await createMarker(payload)
+
+        cleanup()
+
+        handleAddMarker(marker, map)
+      } catch (error) {
+        console.error(error)
+        toast.error('Não foi possível adicionar o marcador.')
+      }
+    }
+    
+    root.render(<NewMarkerPopup feature={osmData} onCancel={cleanup} onSave={onSave}/>
     )
   }
+
   const handlePolygonChange = () => {
     if (!drawRef.current || !storesRef.current) return
   
@@ -170,6 +202,8 @@ export default function Map({ setPolygonArea }: MapProps) {
       })
       addStoreLayer(map)
       addPointerCursor(map)
+
+      markers.current.forEach(marker => handleAddMarker(marker, map));
     })
   
     return () => map.remove()

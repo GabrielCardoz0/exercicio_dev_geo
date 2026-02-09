@@ -1,12 +1,9 @@
 import prisma from '../config/db';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export class UsersService {
 
   public getByIdOrFail = async (id: number) => {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: {
         id
       }
@@ -18,7 +15,7 @@ export class UsersService {
   }
 
   public getByEmailOrFail = async (email: string) => {
-    const user = await prisma.user.findFirst({
+    const user = await prisma.users.findFirst({
       where: {
         email
       }

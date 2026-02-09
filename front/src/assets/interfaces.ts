@@ -42,7 +42,6 @@ export type ResourceFeature = GeoJSONFeature<ResourceProperties>;
 export type ResourceFeatureCollection = GeoJSONFeatureCollection<ResourceFeature>;
 
 
-
 export interface IUser {
   id: number;
   name: string;
@@ -51,3 +50,32 @@ export interface IUser {
   updated_at: string;
 }
 
+export interface IMarker {
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  place_id: number;
+  lat: number;
+  lon: number;
+  display_name: string;
+  building: string;
+  city: string;
+  state: string;
+  country: string;
+  postcode: string;
+  user_id: number;
+
+}
+export interface INewMarkerPayload {
+  place_id?: number,
+  lat: number,
+  lon: number,
+  display_name?: string,
+  address?: {
+      building?: string,
+      city?: string,
+      state?: string,
+      country?: string,
+      postcode?: string | number
+  }
+}

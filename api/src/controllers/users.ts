@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middlewares/auth-validator';
 import { UsersService } from '../services/users';
+import { AuthenticatedRequest } from '../interfaces';
 
 export default class UsersControllers {
   private readonly usersService: UsersService;
