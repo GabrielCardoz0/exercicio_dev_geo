@@ -8,7 +8,7 @@ import { createRoot } from "react-dom/client"
 import mapboxgl from 'mapbox-gl'
 import MapboxDraw from '@mapbox/mapbox-gl-draw'
 import * as turf from '@turf/turf'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { Feature, Polygon } from 'geojson'
@@ -20,6 +20,7 @@ interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>
   markers: React.RefObject<IMarker[]>
   handleAddMarker: (marker: IMarker, map: mapboxgl.Map) => Promise<void>
+  setMarkers: Dispatch<SetStateAction<IMarker[]>>
 }
 
 const createMapPopup = ({ lngLat, map, popupNode }:{ lngLat: [number, number], popupNode: HTMLElement, map: mapboxgl.Map }) => {
@@ -57,7 +58,7 @@ const addPointerCursor = (map: mapboxgl.Map) => {
   })
 }
 
-export default function Map({ setPolygonArea, mapRef, markers, handleAddMarker }: MapProps) {
+export default function Map({ setPolygonArea, mapRef, markers, handleAddMarker, setMarkers }: MapProps) {
   const drawRef = useRef<MapboxDraw | null>(null)
   const storesRef = useRef<ResourceFeatureCollection | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
@@ -109,6 +110,7 @@ export default function Map({ setPolygonArea, mapRef, markers, handleAddMarker }
         cleanup()
 
         handleAddMarker(marker, map)
+        setMarkers(prev => prev.concat(marker))
       } catch (error) {
         console.error(error)
         toast.error('Não foi possível adicionar o marcador.')
@@ -188,8 +190,8 @@ export default function Map({ setPolygonArea, mapRef, markers, handleAddMarker }
         type: 'geojson',
         data: storesRef.current,
         cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50,
+        clusterMaxZoom: 15,
+        clusterRadius: 20,
       })
       .on('click', 'unclustered-point', (e) => {
         const feature = e.features?.[0] as ResourceFeature | undefined

@@ -64,12 +64,12 @@ export default function GeoMap() {
 
     root.render(<MarkerInfoPopup marker={marker} onDelete={() => handleDeleteMarker(marker.id, newMarker)} />)
     newMarker.setPopup(popup);
-    setMarkers(prev => prev.concat(marker))
   }
 
   const handleFly = ({ lon, lat }: { lon: number, lat: number }) => {
     mapRef.current!.flyTo({
       center: [lon, lat],
+      zoom: 15,
       duration: 800,
     })
   }
@@ -101,6 +101,7 @@ export default function GeoMap() {
             setPolygonArea={setPolygonArea}
             mapRef={mapRef}
             markers={markersRef}
+            setMarkers={setMarkers}
             handleAddMarker={handleAddMarker}
           />
         </main>
