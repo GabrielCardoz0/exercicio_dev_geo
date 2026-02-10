@@ -16,7 +16,7 @@ export default class MarkersControllers {
       return res.send(markers);
     } catch (error) {
       console.log(error);
-      return res.status(500).send({ message: 'Erro inesperado' })
+      return res.status(400).send({ message: 'Erro inesperado' })
     }
   }
 
@@ -24,10 +24,10 @@ export default class MarkersControllers {
     try {
       const marker = await this.markersService.create(req.user!, req.body);
 
-      return res.send({ marker });
+      return res.status(201).send({ marker });
     } catch (error) {
       console.log(error);
-      return res.status(500).send({ message: 'Erro inesperado' })
+      return res.status(400).send({ message: 'Erro inesperado' })
     }
   }
 
@@ -38,7 +38,7 @@ export default class MarkersControllers {
       return res.send({ message: 'Marcador deletado com sucesso!' });
     } catch (error) {
       console.log(error);
-      return res.status(500).send({ message: 'Erro inesperado' })
+      return res.status(400).send({ message: 'Erro inesperado' })
     }
   }
 

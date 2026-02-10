@@ -6,6 +6,9 @@ const config: Config = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js'],
+  transformIgnorePatterns: [
+    "/node_modules/(?!@faker-js/faker)/"
+  ],
 };
 
 export default config;

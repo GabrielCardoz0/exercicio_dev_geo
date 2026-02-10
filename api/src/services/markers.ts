@@ -6,7 +6,7 @@ import { IOSMInput, IUser, IMarker } from '../interfaces';
 export class MarkersService {
 
   public getByIdOrFail = async (id: number) => {
-    const marker = prisma.markers.findUnique({
+    const marker = await prisma.markers.findFirst({
       where: {
         id
       }

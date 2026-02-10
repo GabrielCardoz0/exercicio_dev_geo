@@ -16,7 +16,7 @@ export default class UsersControllers {
       return res.send(user);
     } catch (error) {
       console.log(error);
-      return res.status(500).send({ message: 'Erro inesperado' })
+      return res.status(400).send({ message: 'Erro inesperado' })
     }
   }
 }
