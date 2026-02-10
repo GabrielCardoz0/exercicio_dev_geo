@@ -74,16 +74,6 @@ api/dev.db
 
 ---
 
-### 📁 Prisma
-
-É necessário gerar o client do Prisma manualmente:
-
-```bash
-npx prisma generate
-```
-
----
-
 ### ⚙️ Variáveis de Ambiente
 
 1. Crie um arquivo `.env` na raiz da pasta `api`:
@@ -101,6 +91,16 @@ DATABASE_URL="file:./dev.db"
 ```
 
 > ⚠️ Ajuste os valores conforme sua necessidade.
+
+---
+
+### 📁 Prisma
+
+É necessário gerar o client do Prisma manualmente:
+
+```bash
+npx prisma generate
+```
 
 ---
 
@@ -211,7 +211,7 @@ npm run preview
 O build irá abrir por padrão em:
 
 ```
-Local: http://localhost:5173/
+Local: http://localhost:4173/
 ```
 
 ---
