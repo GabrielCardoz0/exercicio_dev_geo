@@ -43,7 +43,7 @@ export class ResourcesService {
 
     return {
       type: "FeatureCollection",
-      features: [resources[0]]
+      features: resources
     };
   }
 

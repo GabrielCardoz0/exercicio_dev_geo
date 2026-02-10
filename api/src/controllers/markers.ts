@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../interfaces';
-import { MarkersService } from '../services/markers';
+import { AuthenticatedRequest } from '../interfaces/index.js';
+import { MarkersService } from '../services/markers.js';
 
 export default class MarkersControllers {
   private readonly markersService: MarkersService;

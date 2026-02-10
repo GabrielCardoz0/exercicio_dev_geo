@@ -1,8 +1,8 @@
 /front/node_modules
 /front/.env
+/front/dist
 
 /api/node_modules
 /api/.env
 /api/src/generated/prisma
-/api/dev.db
-/dev.db
+/api/dist

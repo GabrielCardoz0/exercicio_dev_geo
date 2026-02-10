@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import ResourcesControllers from '../controllers/resources';
-import { authenticateToken } from '../middlewares/auth-validator';
+import ResourcesControllers from '../controllers/resources.js';
+import { authenticateToken } from '../middlewares/auth-validator.js';
 
 const resourcesRouter = Router();
 

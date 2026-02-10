@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import resourcesRouter from './routers/resources';
-import authRouter from './routers/auth';
-import usersRouter from './routers/users';
-import markersRouter from './routers/markers';
+import resourcesRouter from './routers/resources.js';
+import authRouter from './routers/auth.js';
+import usersRouter from './routers/users.js';
+import markersRouter from './routers/markers.js';
 
 export default express()
 .use(express.json())

@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { UsersService } from '../services/users';
-import { AuthenticatedRequest } from '../interfaces';
+import { UsersService } from '../services/users.js';
+import { AuthenticatedRequest } from '../interfaces/index.js';
 
 export default class UsersControllers {
   private readonly usersService: UsersService;
