@@ -6,3 +6,5 @@
 /api/.env
 /api/src/generated/prisma
 /api/dist
+
+/*/.env
