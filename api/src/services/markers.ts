@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
-import prisma from '../config/db.js';
-import { IOSMInput, IUser, IMarker } from '../interfaces/index.js';
+import prisma from '../config/db';
+import { IOSMInput, IUser, IMarker } from '../interfaces';
 
 
 export class MarkersService {

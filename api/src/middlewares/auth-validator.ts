@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import prisma from "../config/db.js";
-import { AuthenticatedRequest, JWTPayload } from "../interfaces/index.js";
+import prisma from "../config/db";
+import { AuthenticatedRequest, JWTPayload } from "../interfaces";
 
 dotenv.config();
 

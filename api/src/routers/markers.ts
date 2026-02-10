@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middlewares/auth-validator.js';
-import MarkersControllers from '../controllers/markers.js';
+import { authenticateToken } from '../middlewares/auth-validator';
+import MarkersControllers from '../controllers/markers';
 import Joi from 'joi';
-import { validateBody } from '../middlewares/schema-validator.js';
-import { IOSMInput } from '../interfaces/index.js';
+import { IOSMInput } from '../interfaces';
+import { validateBody } from '../middlewares/schema-validator';
 
 const markersRouter = Router();
 

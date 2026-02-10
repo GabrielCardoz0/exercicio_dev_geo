@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ResourcesService } from "../services/resources.js";
+import { ResourcesService } from "../services/resources";
 
 export default class ResourcesControllers {
   private readonly resourcesService: ResourcesService;

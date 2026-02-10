@@ -134,26 +134,6 @@ npm run test:watch
 
 ---
 
-### 🏗️ Build do projeto (BACKEND)
-
-```bash
-npm run build
-```
-
-Preview do build:
-
-```bash
-npm run start
-```
-
-O build irá rodar por padrão em:
-
-```
-http://localhost:5000
-```
-
----
-
 ## 🎨 Frontend (Vite)
 
 ### 📂 Acessar a pasta do frontend

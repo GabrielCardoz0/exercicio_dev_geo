@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import AuthControllers from '../controllers/auth.js';
+import AuthControllers from '../controllers/auth';
 import Joi from 'joi';
-import { validateBody } from '../middlewares/schema-validator.js';
+import { validateBody } from '../middlewares/schema-validator';
 
 const authRouter = Router();
 
