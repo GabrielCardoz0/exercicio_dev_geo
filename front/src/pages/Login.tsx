@@ -9,8 +9,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 const Login = () => {
-  const [email, setEmail] = useState('gabriel@gmail.com');
-  const [password, setPassword] = useState('gabriel');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const Login = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="gabriel@email.com"
+                placeholder="email@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
