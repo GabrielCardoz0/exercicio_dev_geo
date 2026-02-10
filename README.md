@@ -1,97 +1,250 @@
-# Teste para Desenvolvedor Fullstack - Kognita
+# Documentação para Setup Local GEOMAP
 
-## Informações gerais
-
-1. Sobre o prazo de entrega: 1 semana (7 dias) a partir do recebimento do mesmo.
-2. Não é permitido compartilhar esse exercício com terceiros.
-
-
-## Objetivo do Teste
-
-Criar uma aplicação web interativa com mapas que permita o usuário final visualizar e interagir com dados geoespaciais.
+Este projeto está utilizando Vite com shadcn + tailwind para estilização, e uma API em Node.js escrita em TS, com banco de dados SQLite com PrismaORM.
+Importante: A biblioteca de mapas selecionada para este projeto foi a `Mapbox GL`, caso não tenha uma conta no site oficial, crie em: `https://www.mapbox.com/`.
 
 ---
 
-## Instruções de Entrega
+## 📁 Estrutura do Projeto
 
-1. **Fork do Repositório Original**  
-   Crie um fork do repositório original para sua conta no GitHub. Isso permitirá que você trabalhe no projeto sem alterar o repositório principal.
-
-2. **Desenvolvimento e Histórico de Commits**  
-   Realize todas as alterações e implementações diretamente no repositório forkeado. Certifique-se de manter um histórico de commits que demonstre o progresso e as decisões técnicas tomadas.
-
-3. **Entrega Final**  
-   A entrega deve ser feita por meio do repositório "forkeado", contendo:  
-   - Um arquivo `README.md` com instruções claras sobre como configurar, rodar e testar a aplicação.
+```
+raiz/
+├── api/        # API (Node.js + TS + Express + Prisma + SQLite)
+├── front/      # Frontend (Vite)
+├── files/      # Arquivos utilizados como base de dados para pontos no mapa
+└── README.md
+```
 
 ---
 
-## Passo a Passo para o Desenvolvimento
+## ✅ Pré-requisitos
 
-1. **Configuração Inicial**  
-   - Escolha e configure as dependências necessárias para o projeto (ex.: React ou outro framework, Leaflet/Mapbox, Express).  
-   - Configure um servidor básico usando Node.js para servir a aplicação e processar chamadas à API.
-  
-2. **Utilização das Bases de Dados**  
-   - Use os arquivos fornecidos na pasta `files` para adicionar pontos ao mapa.  
-   - Configure eventos para que, ao clicar ou passar o mouse sobre os marcadores, a informação de `censo_2022_domicilio_particular_poi_counts` seja exibida.  
+Para iniciar o projeto, é necessário se ter instalado:
 
-3. **Implementação do Mapa**  
-   - Exiba o mapa utilizando **Leaflet** ou **Mapbox**.  
-   - Implemente funcionalidades que permitam desenhar polígonos no mapa, e realizar e exibir o resultado de operações sobre a área demarcada para o usuário final. Operações: total de pontos, soma, média e mediana.
+### 1. Node.js
 
-4. **Integração com a API OpenStreetMap**  
-   - Adicione uma funcionalidade que permita que o usuário insira pinos ao clicar no mapa.  
-   - Para cada pino adicionado, consulte a API do OpenStreetMap com as coordenadas correspondentes.  
-   - Persista e exiba (quando possível) as informações retornadas ao clicar ou passar o mouse sobre os pinos.
-    - O ponto { lat: 40.748817, lon: -73.985428} tem o seguinte resultado: 
-        ```bash
-        {
-            "place_id": 123456,
-            "lat": "40.748817",
-            "lon": "-73.985428",
-            "display_name": "Empire State Building, New York, NY, USA",
-            "address": {
-                "building": "Empire State Building",
-                "city": "New York",
-                "state": "NY",
-                "country": "United States",
-                "postcode": "10118"
-            }
-        }
-        ```
-
-5. **Testes e Documentação**  
-   - Inclua testes básicos para validar o funcionamento das principais funcionalidades.  
-   - Documente todo o processo no `README.md`, incluindo como instalar dependências, rodar a aplicação e executar os testes.
+* Versão **Node.js 20** ou superior
 
 ---
 
-## Desafios Adicionais (Extras)
+### 2. Sistema Operacional Recomendado
 
-Para destacar ainda mais suas habilidades, implemente uma ou mais das funcionalidades abaixo:
+* Linux (testado)
+* macOS ou Windows também funcionam (com Node + npm)
 
-1. **Autenticação JWT**  
-   - Implemente autenticação no backend utilizando **JSON Web Tokens (JWT)** para proteger as rotas.
+* *Este projeto foi desenvolvido dentro do ambiente linux.*
+---
 
-2. **Persistência de Dados**  
-   - Salve as consultas feitas pelo usuário em um banco de dados.  
-   - Armazene as operações realizadas, como o desenho de polígonos e adição de pinos, em um banco de dados local ou em memória.
+## 🔧 Backend (API)
 
-3. **Filtros e Edição de Pinos**  
-   - Adicione filtros que permitam exibir apenas determinados tipos de pontos da base de dados fake no mapa.  
-   - Implemente funcionalidades para editar ou remover pinos adicionados pelo usuário.
+### 📂 Acessar a pasta da API
 
-4. **Testes Automatizados**  
-   - Adicione testes automatizados usando ferramentas como **Jest**, **Cypress** ou similares.
+Abra um novo terminal na raiz do projeto e digite:
+
+```bash
+cd api
+```
 
 ---
 
-## Critérios de Avaliação
+### 📦 Instalar dependências
 
-- **Organização do Código**: Qualidade, clareza e modularidade do código.  
-- **Funcionalidade**: Implementação correta e funcionalidade das features solicitadas.  
-- **Documentação**: Instruções claras no README e histórico de commits detalhado.  
-- **Extras**: Implementação dos desafios adicionais.  
+```bash
+npm install
+```
 
-Boa sorte e divirta-se desenvolvendo! 🚀
+Este comando irá instalar todas as dependências, incluindo:
+
+* Express
+* Prisma
+* SQLite (better-sqlite3)
+* Jest (testes)
+
+---
+
+### 🗄️ Banco de Dados (SQLite + Prisma)
+
+O projeto usa **SQLite** com Prisma.
+
+* O arquivo do banco local é:
+
+```
+api/dev.db
+```
+
+---
+
+### 📁 Prisma
+
+É necessário gerar o client do Prisma manualmente:
+
+```bash
+npx prisma generate
+```
+
+---
+
+### ⚙️ Variáveis de Ambiente
+
+1. Crie um arquivo `.env` na raiz da pasta `api`:
+
+```bash
+touch .env
+```
+
+2. Copie o arquivo `.env.example` para dentro do novo arquivo `.env`, e terá algo como:
+
+```env
+PORT=5000
+JWT_SECRET="supersecret"
+DATABASE_URL="file:./dev.db"
+```
+
+> ⚠️ Ajuste os valores conforme sua necessidade.
+
+---
+
+### ▶️ Rodar a API em modo desenvolvimento
+
+```bash
+npm run dev
+```
+
+A API ficará disponível em:
+
+```
+http://localhost:5000
+```
+
+---
+
+### 🧪 Testes (Jest)
+
+Rodar testes:
+
+```bash
+npm test
+```
+
+Modo watch:
+
+```bash
+npm run test:watch
+```
+
+---
+
+### 🏗️ Build do projeto (BACKEND)
+
+```bash
+npm run build
+```
+
+Preview do build:
+
+```bash
+npm run start
+```
+
+O build irá rodar por padrão em:
+
+```
+http://localhost:5000
+```
+
+---
+
+## 🎨 Frontend (Vite)
+
+### 📂 Acessar a pasta do frontend
+
+Abra um novo terminal na raiz do projeto e digite:
+
+```bash
+cd front
+```
+
+---
+
+### 📦 Instalar dependências
+
+```bash
+npm install
+```
+
+Este comando irá instalar todas as dependências, incluindo:
+
+* React
+* Vite
+* Mapbox GL + Draw
+* TailwindCSS + shadcn/ui
+
+---
+
+### ⚙️ Variáveis de Ambiente (Frontend)
+
+1. Crie um arquivo `.env` na raiz da pasta `front`:
+
+```bash
+touch .env
+```
+
+2. Copie o arquivo `.env.example` para dentro do novo arquivo `.env`, e terá algo como:
+
+```env
+VITE_MAPBOX_API_TOKEN=''
+VITE_API_URL='http://localhost:5000'
+```
+
+> ⚠️ É obrigatório que o campo VITE_MAPBOX_API_TOKEN seja preenchido com seu token MAPBOX.
+
+---
+
+### ▶️ Rodar o frontend em modo desenvolvimento
+
+Com o arquivo `.env` configurado, rode:
+
+```bash
+npm run dev
+```
+
+O Vite irá abrir por padrão em:
+
+```
+Local: http://localhost:5173/
+```
+
+---
+
+### 🏗️ Build do projeto (FRONTEND)
+
+```bash
+npm run build
+```
+
+Preview do build:
+
+```bash
+npm run preview
+```
+
+O build irá abrir por padrão em:
+
+```
+Local: http://localhost:5173/
+```
+
+---
+
+## 🚀 Pronto!
+
+Com esses passos, o projeto **GEOMAP** estará rodando completamente em ambiente local.
+Um usuário para teste já está criado, as credenciais de acesso são:
+
+```bash
+
+email: guest@email.com
+
+password: guest@password
+
+```
